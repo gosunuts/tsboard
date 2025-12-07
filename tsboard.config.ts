@@ -1,12 +1,13 @@
-export const IS_DEV = false // 프로덕션에서는 false, 개발 단계에서만 true
+export const IS_DEV = false // production build by default; switch to true only for vite dev server
 export const VITE_PORT = 3000
 export const DEV_DOMAIN = "http://localhost"
 const dev_url = `${DEV_DOMAIN}:${VITE_PORT}`
-const production_url = "https://tsboard.dev"
 
-// TSBOARD 기본 설정값 : 필요 시 수정하셔야 하는 곳입니다
+const runtime_prod_url = typeof window !== "undefined" ? window.location.origin : ""
+
+// TSBOARD base settings
 export const TSBOARD = {
-  API: (IS_DEV ? dev_url : production_url) + "/goapi",
+  API: (IS_DEV ? dev_url : runtime_prod_url) + "/goapi",
   API_PORT: 3003,
   MAX_UPLOAD_SIZE: 1024 * 1024 * 100,
   PREFIX: "",
@@ -33,13 +34,12 @@ export const TSBOARD = {
       NAVER: true,
       KAKAO: true,
     },
-    URL: IS_DEV ? dev_url : production_url,
+    URL: IS_DEV ? dev_url : runtime_prod_url,
   },
   VERSION: "v1.0.6",
 }
 
-// 사이트의 기본 컬러셋 지정 (필요 시 수정)
-// 참고: https://vuetifyjs.com/en/styles/colors/#material-colors
+// Default color palette (Vuetify material colors)
 export const COLOR = {
   HOME: {
     THEME: "light",
@@ -75,7 +75,7 @@ export const COLOR = {
   },
 }
 
-// 브라우저 크기 별 사이즈 정의 (대부분 수정 불필요)
+// Breakpoint presets
 export const SCREEN = {
   MOBILE: { WIDTH: 480, COLS: 12 },
   TABLET: { WIDTH: 768, COLS: 6 },
@@ -83,13 +83,13 @@ export const SCREEN = {
   LARGE: { WIDTH: 1440, COLS: 3 },
 }
 
-// EXIF 정보 가공용 상수값들 정의 (수정 금지)
+// EXIF default exposure caps
 export const EXIF = { APERTURE: 100, EXPOSURE: 1000 }
 
-// 사이트 관리자/책임자 명시 (반드시 수정 필요)
+// Default policy contact
 export const POLICY = { NAME: "sirini", EMAIL: "sirini@gmail.com" }
 
-// 기본 화폐 단위 (기본: 원화)
+// Default currency
 export const CURRENCY = "krw" // usb, cny, jpy, eur ...
 
 Object.freeze(TSBOARD)

@@ -1,0 +1,14 @@
+node_modules
+dist
+tmp
+npm-debug.log
+pnpm-lock.yaml
+yarn.lock
+.git
+.gitignore
+.vscode
+.DS_Store
+*.log
+__tmp_goapi
+mysql_data
+uploads

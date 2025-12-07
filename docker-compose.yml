@@ -1,0 +1,62 @@
+services:
+  frontend:
+    build:
+      context: .
+      target: frontend
+    image: tsboard-frontend:local
+    depends_on:
+      - goapi
+    ports:
+      - "8080:80"
+    volumes:
+      - uploads:/usr/share/nginx/html/upload
+    restart: unless-stopped
+
+  goapi:
+    build:
+      context: .
+      target: goapi
+    image: tsboard-goapi:local
+    env_file:
+      - .env
+    environment:
+      DB_HOST: ${DB_HOST:-db}
+      DB_MAX_IDLE: ${DB_MAX_IDLE:-10}
+      DB_MAX_OPEN: ${DB_MAX_OPEN:-100}
+      GOAPI_PORT: ${GOAPI_PORT:-3003}
+    ports:
+      - "3003:3003"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads:/app/upload
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-tsboard}
+      MYSQL_USER: ${DB_USER:-tsboard}
+      MYSQL_PASSWORD: ${DB_PASS:-tsboard}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-tsboard_root}
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u${DB_USER:-tsboard} -p${DB_PASS:-tsboard} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+volumes:
+  uploads:
+  mysql_data:
